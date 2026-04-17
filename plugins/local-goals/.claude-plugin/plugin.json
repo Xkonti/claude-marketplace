@@ -1,0 +1,5 @@
+{
+  "name": "local-goals",
+  "description": "Set + manage session goals in CLAUDE.local.md. Auto-loads for all agents/subagents → persistent focus across session w/o repeating yourself.",
+  "version": "1.0.0"
+}
