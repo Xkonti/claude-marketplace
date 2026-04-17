@@ -1,0 +1,5 @@
+{
+  "name": "rules",
+  "description": "Manage .claude/rules/ files with proper structure and caveman speak formatting",
+  "version": "1.0.0"
+}
