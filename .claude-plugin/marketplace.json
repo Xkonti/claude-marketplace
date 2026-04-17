@@ -1,0 +1,33 @@
+{
+  "name": "xkonti-claude-marketplace",
+  "owner": {
+    "name": "Xkonti"
+  },
+  "plugins": [
+    {
+      "name": "caveman",
+      "source": "./plugins/caveman",
+      "description": "Adds the caveman speak plugin to reduce token usage and improve response readability"
+    },
+    {
+      "name": "quality-agents",
+      "source": "./plugins/quality-agents",
+      "description": "Adds a set of agents to ensure high quality code"
+    },
+    {
+      "name": "research-agents",
+      "source": "./plugins/research-agents",
+      "description": "Adds a set of agents to help with doing research"
+    },
+    {
+      "name": "rules",
+      "source": "./plugins/rules",
+      "description": "Manage .claude/rules/ files with proper structure and caveman speak formatting"
+    },
+    {
+      "name": "local-goals",
+      "source": "./plugins/local-goals",
+      "description": "Set + manage session goals in CLAUDE.local.md via /set-goal skill — persistent focus across agents/subagents without repeating yourself"
+    }
+  ]
+}
