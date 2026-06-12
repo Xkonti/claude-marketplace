@@ -9,3 +9,4 @@ Various Claude Code goodies Ben likes to use.
 - **quality-agents** — agents to ensure high quality code
 - **research-agents** — agents to help with research
 - **local-goals** — `/set-goal` skill to manage a `## Goals` section in `CLAUDE.local.md` for persistent session focus across agents/subagents
+- **event-sourcing** — Event Modeling + Event Sourcing skills: plan systems with event models, design streams/aggregates/projections, apply ES patterns

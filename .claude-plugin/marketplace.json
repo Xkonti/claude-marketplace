@@ -28,6 +28,11 @@
       "name": "local-goals",
       "source": "./plugins/local-goals",
       "description": "Set + manage session goals in CLAUDE.local.md via /set-goal skill — persistent focus across agents/subagents without repeating yourself"
+    },
+    {
+      "name": "event-sourcing",
+      "source": "./plugins/event-sourcing",
+      "description": "Event Modeling + Event Sourcing skills — plan systems w/ event models, design streams/aggregates/projections, apply ES patterns"
     }
   ]
 }
