@@ -1,0 +1,5 @@
+{
+  "name": "frontend-skills",
+  "description": "LLM-safe frontend design-system skills — set up a rigid token + base-component lockdown in Vue projects, and maintain/evolve/port the system anywhere",
+  "version": "0.1.0"
+}

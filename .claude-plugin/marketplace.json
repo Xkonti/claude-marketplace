@@ -33,6 +33,11 @@
       "name": "event-sourcing",
       "source": "./plugins/event-sourcing",
       "description": "Event Modeling + Event Sourcing skills — plan systems w/ event models, design streams/aggregates/projections, apply ES patterns"
+    },
+    {
+      "name": "frontend-skills",
+      "source": "./plugins/frontend-skills",
+      "description": "LLM-safe frontend design-system skills — set up a rigid token + base-component lockdown in Vue projects, and maintain/evolve/port the system anywhere"
     }
   ]
 }

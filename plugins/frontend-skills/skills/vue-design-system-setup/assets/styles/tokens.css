@@ -1,0 +1,173 @@
+/*
+ * Design tokens — THE single source of visual truth.
+ *
+ * TWO LAYERS, ONE FILE:
+ *
+ *  1. PRIMITIVES (`:root`, `--raw-*`) — raw values (the palette, scrim, …). Primitives are an
+ *     implementation detail, NOT design tokens: they generate no utilities, carry no meaning,
+ *     and may NEVER be referenced outside this file (not in components, not in tokens.ts).
+ *
+ *  2. SEMANTIC TOKENS (`@theme`) — the actual design tokens. Each is named for the DECISION /
+ *     PURPOSE it encodes (`surface-card`, `text-muted`, `tone-danger`), never for its value
+ *     (`gray-100`, `blue-600`, `17px`). Tailwind v4 turns each into a utility class
+ *     (`bg-surface-card`) + CSS var (`var(--color-surface-card)`); `components/ui` consumes
+ *     tokens ONLY through those (mostly via the typed maps in `components/ui/tokens.ts`).
+ *
+ * SEVERAL TOKENS SHARING ONE PRIMITIVE IS CORRECT AND EXPECTED — `accent`, `info` and `ring`
+ * may all point at the same blue. They are separate DECISIONS that happen to share a value;
+ * keeping them distinct lets one change later without dragging the others along.
+ *
+ * PROCESS RULES:
+ *  - New visual intent → ADD A SEMANTIC TOKEN (aliasing an existing primitive is fine).
+ *    Never inline a raw value in a component, never reuse a token whose *name* means
+ *    something else just because its *value* looks right.
+ *  - New raw value → add a primitive here first, then the token(s) that use it.
+ *  - `--color-*: initial` below DELETES Tailwind's default palette: `bg-red-500`,
+ *    `text-zinc-100`, … do not exist anywhere in the app, even inside `components/ui`.
+ *    Off-token color is a build error, not a review comment.
+ *
+ * Import order (style entry file):
+ *   @import 'tailwindcss';
+ *   @import './tokens.css';
+ */
+
+/* ============================================================================
+ * 1. PRIMITIVES — private raw values. No meaning, no utilities, no external use.
+ *    Starter palette below is a neutral grey ramp + one accent + status hues — replace
+ *    the values with the project's brand, keep the structure.
+ * ========================================================================== */
+:root {
+  /* Neutral ramp (light → dark). Steps are yours, not Tailwind's. */
+  --raw-white: #ffffff;
+  --raw-grey-1: #fafafa;
+  --raw-grey-2: #f7f7f8;
+  --raw-grey-3: #eeeef1;
+  --raw-grey-4: #eeeef0;
+  --raw-grey-5: #e3e3e7;
+  --raw-grey-6: #cfcfd5;
+  --raw-grey-7: #8a8a93;
+  --raw-grey-8: #62626b;
+  --raw-grey-9: #2a2a30;
+  --raw-grey-10: #18181b;
+
+  /* Brand / status hues. */
+  --raw-blue-mid: #2563eb;
+  --raw-blue-deep: #1d4ed8;
+  --raw-blue-pale: #dbeafe;
+  --raw-green-deep: #15803d;
+  --raw-green-pale: #dcfce7;
+  --raw-amber-deep: #b45309;
+  --raw-amber-pale: #fef3c7;
+  --raw-red-deep: #b91c1c;
+  --raw-red-pale: #fee2e2;
+
+  --raw-scrim: rgb(0 0 0 / 0.4);
+}
+
+/* ============================================================================
+ * 2. SEMANTIC TOKENS — the design system's vocabulary. Purpose-named decisions.
+ * ========================================================================== */
+@theme {
+  /* Kill Tailwind's default palette: token colors below are the ONLY colors that compile.
+     MUST come before the token definitions. */
+  --color-*: initial;
+
+  /* ---- Surfaces ---- */
+  --color-surface-base: var(--raw-grey-2); /* page background */
+  --color-surface-card: var(--raw-white);
+  --color-surface-raised: var(--raw-white); /* popovers, menus */
+  --color-surface-sunken: var(--raw-grey-4);
+  --color-surface-overlay: var(--raw-scrim); /* dialog scrim */
+
+  /* ---- Text ---- */
+  --color-text-strong: var(--raw-grey-10);
+  --color-text: var(--raw-grey-9); /* default body */
+  --color-text-muted: var(--raw-grey-8);
+  --color-text-subtle: var(--raw-grey-7);
+  --color-text-inverse: var(--raw-grey-1);
+  --color-text-on-accent: var(--raw-white);
+
+  /* ---- Borders / dividers ---- */
+  --color-border: var(--raw-grey-5);
+  --color-border-strong: var(--raw-grey-6);
+  --color-border-subtle: var(--raw-grey-3);
+
+  /* ---- Accent / brand ---- */
+  --color-accent: var(--raw-blue-mid);
+  --color-accent-hover: var(--raw-blue-deep);
+  --color-accent-muted: var(--raw-blue-pale);
+
+  /* ---- Semantic tones (badge/callout tone enums + data-state surfaces) ----
+   * `info` intentionally shares blue with the accent family: separate decisions,
+   * same value today. */
+  --color-success: var(--raw-green-deep);
+  --color-success-surface: var(--raw-green-pale);
+  --color-warning: var(--raw-amber-deep);
+  --color-warning-surface: var(--raw-amber-pale);
+  --color-danger: var(--raw-red-deep);
+  --color-danger-surface: var(--raw-red-pale);
+  --color-info: var(--raw-blue-deep);
+  --color-info-surface: var(--raw-blue-pale);
+
+  /* ---- Focus ring ---- */
+  --color-ring: var(--raw-blue-mid);
+
+  /* ---- Transparent utility (bg-transparent etc.) — restored after the palette kill ---- */
+  --color-transparent: transparent;
+
+  /* ---- Spacing scale (→ p-md, gap-lg, m-xs, …) ----
+   * Scale names ARE the semantic layer here: `md` is a role on a scale, not a pixel count. */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+
+  /* ---- Radius (→ rounded-md, …) ---- */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-full: 9999px;
+
+  /* ---- Shadow (→ shadow-md, …) ---- */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.06);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.08);
+  --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.12);
+
+  /* ---- Font size (→ text-sm, text-lg, …) ---- */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+
+  /* ---- Font weight (→ font-medium, …) ---- */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Component-specific animation tokens (e.g. --animate-dialog-*) also live here when the
+   * base catalog needs them — consumed only by the owning component's skin. */
+}
+
+/*
+ * Non-utility CSS vars + base element styling (kept out of @theme so they don't generate
+ * utilities).
+ */
+:root {
+  /* Stacking order for overlay surfaces (consumed directly by components/ui). */
+  --z-dropdown: 1000;
+  --z-overlay: 1100;
+  --z-dialog: 1200;
+  --z-toast: 1300;
+}
+
+body {
+  background-color: var(--color-surface-base);
+  color: var(--color-text);
+  font-family: var(--default-font-family, ui-sans-serif, system-ui, sans-serif);
+}
