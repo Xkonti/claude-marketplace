@@ -38,6 +38,11 @@
       "name": "frontend-skills",
       "source": "./plugins/frontend-skills",
       "description": "LLM-safe frontend design-system skills — set up a rigid token + base-component lockdown in Vue projects, and maintain/evolve/port the system anywhere"
+    },
+    {
+      "name": "factory",
+      "source": "./plugins/factory",
+      "description": "Linear-driven dev workflow — /factory:link repo to project, /factory:search its issues/docs, /factory:ticket files well-formed typed tickets w/ code pointers + images, /factory:work implements tickets solo or in parallel worktree batches w/ tier-matched subagents + draft PRs"
     }
   ]
 }

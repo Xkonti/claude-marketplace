@@ -1,0 +1,5 @@
+{
+  "name": "factory",
+  "description": "Linear-driven dev workflow — link repo to its Linear project, search its issues/docs, file well-formed tickets w/ code pointers + image attachments, pick up + implement ai-ready tickets solo or in parallel worktree batches w/ tier-matched subagents + draft PRs",
+  "version": "0.2.0"
+}
