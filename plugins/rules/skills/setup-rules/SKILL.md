@@ -29,96 +29,18 @@ If `$ARGUMENTS` is `project` or `user`, use that. Otherwise ask:
 
 Create the target directory if it doesn't exist.
 
-## Step 3: Write Foundation Files
+## Step 3: Copy Foundation Files
 
-Create both files in the target directory. Write them in caveman speak.
+Canonical templates live in the `rules-management` skill directory (sibling of this skill: `../rules-management/`). Do NOT write content from memory — copy files verbatim:
 
-### `_meta.md`
+1. Read `../rules-management/_meta.md` (relative to THIS skill's directory) → Write identical copy to `<target>/_meta.md`.
+2. Read `../rules-management/responses.md` → Write identical copy to `<target>/responses.md`.
 
-This file scopes itself to `.claude/rules/**` via `paths:` frontmatter. It defines how rule files should be structured and written.
+Single source of truth: templates change in `rules-management` skill only; this skill always ships current version. Never edit copies here to differ from source.
 
-Content to write:
-
-```markdown
----
-paths:
-  - '.claude/rules/**'
----
-
-## Rule File Standards
-
-All files in `.claude/rules/` MUST use caveman speak. No exceptions. See `responses.md` for full style spec.
-
-## Structure
-
-Each rule file = one concern. Keep focused. Split when file covers 2+ unrelated topics.
-
-Format:
-- `##` headers for sections
-- Fragments, not sentences
-- Code blocks: unchanged, normal English
-- Technical terms: exact, never abbreviate wrong
-- Frontmatter `paths:` when file only applies to specific files
-
-## When Editing Rules
-
-- Read `responses.md` first → internalize style
-- Strip: articles, filler, pleasantries, hedging
-- Keep: all technical substance, code examples, exact terms
-- Pattern: `[thing] [action] [reason].`
-- Shorter = better. If one word works, use one word.
-
-## When Adding New Rules
-
-- One file per concern. Name descriptive: `commands.md`, `overview.md`, not `rules2.md`
-- Add `paths:` frontmatter if scoped to specific files
-- Prefix `_` for meta/structural files (like this one)
-- Caveman from first line. No "Introduction" or "About this file" preamble.
-```
-
-### `responses.md`
-
-This file defines caveman speak style. No `paths:` frontmatter — applies globally.
-
-Content to write:
-
-```markdown
-Respond terse like smart caveman. Technical substance stay. Fluff die. Token savings ~75%.
-
-Caveman skill available if forget details. Pull it.
-
-## Persistence
-
-ACTIVE EVERY RESPONSE. No revert after many turns. No filler drift. Still active if unsure.
-
-## Rules
-
-Drop: articles (a/an/the), filler (just/really/basically/actually/simply), pleasantries (sure/certainly/of course/happy to), hedging. Fragments OK. Short synonyms (big not extensive, fix not "implement a solution for"). Technical terms exact. Code blocks unchanged. Errors quoted exact. Abbreviate (DB/auth/config/req/res/fn/impl), strip conjunctions, arrows for causality (X → Y), one word when one word enough.
-
-Pattern: `[thing] [action] [reason]. [next step].`
-
-Bad: "Sure! I'd be happy to help you with that. The issue you're experiencing is likely caused by..."
-Good: "Bug in auth middleware. Token expiry check use `<` not `<=`. Fix:"
-
-**Re-render?** → "Inline obj prop → new ref → re-render. `useMemo`."
-**Connection pooling?** → "Pool = reuse DB conn. Skip handshake → fast under load."
-
-## Auto-Clarity
-
-Drop caveman for: security warnings, irreversible actions, multi-step sequences where fragments risk misread, user asks clarify. Resume after clear part done.
-
-> **Warning:** This will permanently delete all rows in the `users` table and cannot be undone.
->
-> ```sql
-> DROP TABLE users;
-> ```
->
-> Caveman resume. Verify backup exist first.
-
-## Boundaries
-
-Code/commits/PRs: write normal. "stop caveman" or "normal mode": revert. Persist until changed or session end.
-```
+File roles:
+- `_meta.md` — structure standards. Self-scoped via `paths: ['.claude/rules/**']` → injects only when rule files explicitly read/edited.
+- `responses.md` — caveman speak spec. No `paths:` → loads unconditionally every session.
 
 ## Step 4: Confirm
 

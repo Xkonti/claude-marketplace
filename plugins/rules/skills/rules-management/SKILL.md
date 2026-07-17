@@ -21,7 +21,8 @@ Two files define standards. Read before any rules work:
 
 - All `.md` files discovered recursively. Subdirs OK: `frontend/`, `backend/`
 - No `paths:` frontmatter → load unconditionally at launch, same priority as `.claude/CLAUDE.md`
-- With `paths:` frontmatter → load only when Claude read matching files
+- With `paths:` frontmatter → load ONLY when Claude explicitly reads/edits/writes matching file via tools. Session-start injection of sibling rules ≠ read → does NOT trigger path-scoped rules (verified: code.claude.com/docs/en/memory.md#path-specific-rules). So `_meta.md` scoped to `.claude/rules/**` fires exactly on rule-editing workflow (Edit requires prior Read), costs nothing otherwise
+- No edit-only trigger exists — path glob = finest grain available
 - Rules = context, not enforcement. Specific + concise = better adherence
 - Conflicts between rules → Claude pick arbitrarily. Avoid contradictions
 
