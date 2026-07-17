@@ -27,7 +27,7 @@ updated: <date>
 - td-1 **Fact store**: PostgreSQL fact table (sequence, stream_id, type, revision, payload jsonb, metadata jsonb). Why: existing DB, small scale, same-transaction option open. Binding: Flyway migration + repository module.
 - td-2 **Serialization**: JSON + revision column reserved. Why: …
 - td-3 **Consistency default**: same-transaction projections. Why: one store (td-1), simplicity `[opinion]`. Per-view overrides in chapter designs.
-- … (td-4 concurrency, td-5 aggregate strategy, td-6 module mapping, td-7 processors, td-8 replay, td-9 test harness)
+- … (td-4 concurrency, td-5 aggregate strategy, td-6 module mapping, td-7 processors, td-8 replay, td-9 test harness, td-10 metadata + PII posture)
 
 ## Streams + Aggregates
 | stream | id source | lifecycle / end | aggregate | invariants enforced |
@@ -57,7 +57,7 @@ updated: <date>
 ```
 
 Rules:
-- `td-N` = technical decision, own numbering — distinct from model `d-N`. Model decisions never edited from here.
+- `td-N` = technical decision, own numbering — distinct from model `d-N`. Model decisions never edited from here. Foundational td-1…td-10 mirror D2 item numbers; later decisions (mid-design, change intake) continue numbering from td-11.
 - `dq-N` = design question. Question about BUSINESS behavior → belongs in MODEL ledger (via model-specs ops), not here. dq = purely technical unknowns (capability, infra, stack).
 - `model-version` pins which verification the design trusts. Model re-verified later w/ changes → diff chapters, re-design affected slices; Projection Map routes further to affected projections.
 - Projection Map = canonical collapse record. Every State View slice → exactly one row; every projection column traces to a serving slice attribute ([read-side.md](read-side.md) grouping invariants). One map row = one implementation unit for reads — its serving slices advance status together. Changes arriving in endpoint/resource language → [change-intake.md](change-intake.md).

@@ -26,7 +26,7 @@ Core unit = **business fact**. Never bare "event" in prose. Composites: business
 
 ## Cross-cutting principles
 
-1. **Day-one decisions, day-N payoffs.** Metadata strategy, revision field, PII handling = cheap at design time, brutal retrofits. When advising greenfield projects: flag these three even if unasked.
+1. **Day-one decisions, day-N payoffs.** Metadata strategy, revision field, PII handling = cheap at design time, brutal retrofits. When advising greenfield projects: flag these three even if unasked. es-design forces them: D2.2 (revision) + D2.10 (metadata + PII posture) — design runs skipping either = incomplete.
 2. **Business language survives operations too.** Failure processes, data purges, period closes — model + name them as business facts/processes where business cares; infra mechanics where only ops cares. Same boundary rule as es-design.
 3. **The model is the ops map.** Where is this attribute used? Which projections touch PII? What breaks if this fact changes? — event model + element index (model-specs) answers; keep it current or lose the map.
 4. **Immutability is the constraint AND the tool.** Can't edit facts → corrections = new facts, deletions = key destruction or external payload removal, schema changes = read-time translation. Every ops technique here = working WITH immutability, never around it.

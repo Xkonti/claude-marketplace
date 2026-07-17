@@ -35,8 +35,9 @@ Each: decision + rationale + stack binding + `td-N` entry. Defaults marked `[opi
 7. **Processor infrastructure**: how automations run — framework processors w/ position tracking, broker consumers, polling workers. Must answer: position tracking? restart resume? parallelism? replay?
 8. **Replay machinery**: how a projection rebuild is triggered + what clears state. Even if "manual script" — name it.
 9. **Test harness**: GWT → test translation approach per slice type (write-side fixture, projection await-assert, containerized integration). Bind to detected test infra.
+10. **Metadata + PII posture**: correlation/causation propagation plumbing (edge capture, provider components, automation hop rule) named in stack terms; PII scan over model attributes (incl. stream ids from natural keys — undeletable position) → stance per data class: minimalism / crypto shredding / forgettable payload. PULL es-ops metadata.md + gdpr.md for content — day-one decisions, brutal retrofits.
 
-Gate: all nine decided + bound; `_design.md` foundational section complete.
+Gate: all ten decided + bound; `_design.md` foundational section complete.
 
 ## D3 — Streams + Aggregates (context level)
 
