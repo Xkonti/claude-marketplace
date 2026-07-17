@@ -2,8 +2,8 @@
 name: es-patterns
 description: >
   Event Sourcing pattern library w/ selection triage — Database Projected Read Model,
-  Live Model, Partially Synchronous Projection, Logic Read Model, Lookup Tables,
-  Closing the Books, Snapshots, Processor Todo-List, Reservation, Modeled Failure.
+  Live Model, Resource Projection, Partially Synchronous Projection, Logic Read Model,
+  Lookup Tables, Closing the Books, Snapshots, Processor Todo-List, Reservation, Modeled Failure.
   Each: problem, when, when-not, trade-offs, gotchas. Pull when picking read model
   strategy, fighting eventual consistency, slow stream loads, automation/process
   coordination, uniqueness/allocation, or reviewing pattern choices in ES designs.
@@ -27,6 +27,7 @@ Selection discipline: pick by problem, not by familiarity or coolness. Cheapest 
 |---|---|
 | Need to query/display data from one bounded stream | Live Model → DB Projected Read Model |
 | Need lists/filters across many streams or instances | DB Projected Read Model |
+| SPA wants resource-style API; many plain views over same data | Resource Projection (collapse w/ Projection Map — es-design) |
 | Read-your-own-write fails; processor misses fresh data | accept+document → Partially Synchronous Projection → same-tx projection (es-design) |
 | Derived values (counts, sums) need a home | Logic Read Model → (only if heavy/reused) Automation w/ stored fact |
 | Display needs name/image for an id facts don't carry | Lookup Table |
@@ -42,7 +43,7 @@ Selection discipline: pick by problem, not by familiarity or coolness. Cheapest 
 
 | File | Patterns |
 |---|---|
-| [read-models.md](read-models.md) | DB Projected Read Model, Live Model, Partially Synchronous Projection, Logic Read Model, Lookup Tables |
+| [read-models.md](read-models.md) | DB Projected Read Model, Live Model, Partially Synchronous Projection, Logic Read Model, Lookup Tables, Resource Projection |
 | [streams.md](streams.md) | Closing the Books, Summary Facts, Snapshots |
 | [processes.md](processes.md) | Processor Todo-List, Reservation, Modeled Failure |
 

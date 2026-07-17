@@ -37,6 +37,12 @@ updated: <date>
 ## Cross-Stream Invariants
 - <rule> → strategy (accept+compensate / redesign / reservation / DCB) + rationale
 
+## Projection Map
+| projection | serves slices | query surface / endpoints | consistency |
+|---|---|---|---|
+| orders-table | [slice:order-list], [slice:order-detail], [slice:vendor-orders] | GET /orders, GET /orders/:id | eventual |
+| publish-todo | [slice:publish-cart] | internal (processor query) | same-tx |
+
 ## Open Design Questions
 - [ ] dq-1 **BLOCKING**: <question> — blocks [slice:x] design
 - [x] dq-2: <q> → <answer> (<source>, <date>)
@@ -53,7 +59,8 @@ updated: <date>
 Rules:
 - `td-N` = technical decision, own numbering — distinct from model `d-N`. Model decisions never edited from here.
 - `dq-N` = design question. Question about BUSINESS behavior → belongs in MODEL ledger (via model-specs ops), not here. dq = purely technical unknowns (capability, infra, stack).
-- `model-version` pins which verification the design trusts. Model re-verified later w/ changes → diff chapters, re-design affected slices.
+- `model-version` pins which verification the design trusts. Model re-verified later w/ changes → diff chapters, re-design affected slices; Projection Map routes further to affected projections.
+- Projection Map = canonical collapse record. Every State View slice → exactly one row; every projection column traces to a serving slice attribute ([read-side.md](read-side.md) grouping invariants). One map row = one implementation unit for reads — its serving slices advance status together. Changes arriving in endpoint/resource language → [change-intake.md](change-intake.md).
 
 ## `design/NN-<chapter>.md` — chapter design
 
@@ -97,7 +104,7 @@ Decisions used: td-1, td-4, td-5
 ```
 
 Block sections per slice type — State Change as above; variations:
-- **State View**: + `Projection type` (live / db / hybrid + WHY vs criteria), `Structure` (table/shape w/ index notes), `Query surface` (query object + result, the abstraction other slices call), `Consistency` (accepted window or closure mechanism).
+- **State View**: + `Projection type` (live / db / hybrid + WHY vs criteria), `Projection Map row` (which projection serves this slice — dedicated or collapsed, w/ rationale), `Structure` (table/shape w/ index notes), `Query surface` (query object + result, the abstraction other slices call), `Consistency` (accepted window or closure mechanism).
 - **Automation**: + `Trigger` (fact / schedule / poll), `Reads` (which query surface), `Issues` (commands), `Idempotency` (mechanism), `Replay stance` (no-replay mark + why), `Error strategy` (one of four, w/ business source).
 - **Translation**: + `Inbound adapter` (transport, slice-private), `External payload type` (private), `Command issued`, `ACL note` (what changes when provider changes — should be: this slice only).
 - **Publishing** (outbound): + `Contract` (schema + version), `Dual-write strategy` (outbox / synchronized tx / inbox-dedup consumer side), `Failure process` (DLQ vs modeled failure fact).

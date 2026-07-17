@@ -5,7 +5,7 @@ THE first-contact problem: button click → command accepted → screen re-rende
 ## Structural groundwork
 
 1. **Commands return context, not data.** Write op returns acknowledgment + COORDINATES: stream id + resulting sequence/version number. Not the updated view (that's read side's job — CQRS), but enough for the client to know WHAT to wait for. `[opinion — some call any return value CQRS-impure; returning execution context ≠ reading state, and it's the enabler for everything below]`
-2. **Projections track their version.** Projector persists, per instance, the last-applied sequence number alongside projected data (or a side version table; multiple projections from one stream → version row each). Now "has this view caught up to MY write?" = comparable numbers.
+2. **Projections track their version.** Projector persists, per instance, the last-applied sequence number alongside projected data (or a side version table; multiple projections from one stream → version row each). Now "has this view caught up to MY write?" = comparable numbers. Collapsed resource projections serving several views (es-design Projection Map) → ONE version fences all of them; view needing finer fencing granularity → dedicated projection, weigh at grouping time (es-design read-side.md).
 3. **Frontend mirrors slices.** UI components/folders per slice, same names as backend modules (command wrapper per State Change, view component per State View). Same navigability argument as vertical slices; UI change → matching slice obvious. BFF aggregation layer: skeptically `[opinion]` — convenient at first, tends to grow own logic/lifecycle + recouple slices the architecture decoupled; default to per-slice endpoints, BFF only w/ concrete multi-client driver.
 
 ## Pattern: Fenced Polling

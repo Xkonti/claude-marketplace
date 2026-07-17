@@ -54,4 +54,4 @@ docs/event-model/                ← root (follow project convention if one exis
 ## Relationship to siblings
 
 - event-modeling — the process producing this content; its phases.md says WHEN to write, this skill says WHERE + HOW to keep organized. quality.md gates still apply, verification.md here extends them cross-file.
-- es-design — consumes these spec files chapter by chapter for implementation design. Stable heading patterns + statuses = its contract; don't invent custom heading styles.
+- es-design — consumes these spec files chapter by chapter for implementation design; its change-intake.md routes implementation-language change requests back into these files via the ripple procedures here. Stable heading patterns + statuses = its contract; don't invent custom heading styles.

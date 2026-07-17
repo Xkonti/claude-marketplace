@@ -37,3 +37,4 @@ Core unit = **business fact**. Never bare "event" in prose. Composites: business
 - Outbox/inbox/DLQ design → es-design integration.md + read-side.md; HERE = nothing duplicated.
 - Replay-safety design rules (side-effect separation) → es-design read-side.md; HERE = running replays operationally.
 - Modeling failure/auth flows → event-modeling; HERE = enforcement + machinery.
+- Feature/data change requests on live system ("add field to endpoint", new screen) → es-design change-intake.md routes them model vs design; HERE = only runtime consequences (replays, versions).

@@ -33,6 +33,7 @@ Outbound external facts = published API (es-fundamentals boundaries.md owns the 
 2. **Generous + self-contained.** Everything consumer needs to act — precomputed totals, applied rules, deltas where consumers decide on changes. Consumer rebuilding state from our internals = contract failure.
 3. **Schema'd + versioned.** Explicit schema artifact (registry-backed format w/ evolution rules where stack has one `[opinion]` — defaults-on-add/remove soak up most changes w/o breaking; plain JSON + documented version field = acceptable floor). Breaking-change process per es-fundamentals/es-ops.
 4. **Contract inventory** (D5.4): every external fact in/out — schema, version, owner team, transport, consumers-if-known. The inventory IS the integration documentation.
+5. **Contract change requests on live system** (provider format change, consumer wants new field) → route via [change-intake.md](change-intake.md) — information test decides model vs design vs translation-slice-only.
 
 ## Failure Processes for Integrations
 

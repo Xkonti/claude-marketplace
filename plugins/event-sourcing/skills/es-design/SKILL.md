@@ -4,8 +4,10 @@ description: >
   Turn verified event model spec files into technical event-sourced design docs —
   streams, aggregates, command handling, projection selection, automations, integrations,
   error handling, test plans. Framework-independent designs bound to detected project stack.
-  Pull when designing implementation from a model, reviewing ES architecture, or advising
-  on aggregates/streams/consistency/sagas/DCB decisions.
+  Also owns change intake: routing live-system change requests ("add field to endpoint",
+  "new screen") back through model vs design. Pull when designing implementation from a model,
+  changing an already-designed system, reviewing ES architecture, or advising on
+  aggregates/streams/consistency/sagas/DCB decisions.
 ---
 
 Bridge skill: event model (WHAT system does) → technical design (HOW to build it, event-sourced). Output = design documents, not code. Also usable standalone as design-knowledge source for ES architecture advice — every guideline carries reasoning per es-fundamentals rules (no naked assertions, steel-man, `[opinion]` marking).
@@ -29,6 +31,7 @@ Core unit = **business fact**. Never bare "event" in prose. Composites: business
 | [write-side.md](write-side.md) | Aggregates, streams, consistency boundaries, sagas/DCB |
 | [read-side.md](read-side.md) | Projection selection, projectors, queries, errors, replays |
 | [integration.md](integration.md) | Translations, publishing, dual-write, contracts |
+| [change-intake.md](change-intake.md) | Live-system change requests — routing impl-language asks (endpoint / field / screen / contract) to model vs design, contamination guards |
 
 Minimum before designing: process.md + design-docs.md.
 
@@ -44,6 +47,7 @@ Minimum before designing: process.md + design-docs.md.
 8. **Replay-safe by construction.** Side-effecting handlers separated from projection updaters; side effects marked no-replay. Designed now, not retrofitted.
 9. **Slice independence survives design.** One slice = one design unit = independently buildable. Cross-slice access only via exposed query interfaces + facts. Trust facts: no re-validation downstream.
 10. **Every GWT → test plan entry.** Scenarios from model translate ~mechanically to executable specs; design doc says how, per slice type.
+11. **Collapse recorded, changes routed.** State View slices may share one physical projection ONLY via Projection Map entry ([read-side.md](read-side.md) grouping). Change requests in implementation language (endpoint, field, resource) → [change-intake.md](change-intake.md), never direct edits.
 
 ## Workflow Summary
 
