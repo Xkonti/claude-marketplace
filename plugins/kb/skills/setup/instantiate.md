@@ -40,6 +40,7 @@ Fixed values baked into templates (never parameterized): split threshold 200, to
 | core | overview.template.md | `.claude/rules/overview.md` |
 | core | docs.template.md | `.claude/rules/docs.md` |
 | core | maintenance.template.md | `.claude/rules/maintenance.md` |
+| core | delegation.template.md | `.claude/rules/delegation.md` (verbatim, no slots) |
 | core | index.template.md | `<primary>/index.md` (lifecycle only; non-lifecycle containers → `.gitkeep` each) |
 | core | readme.template.md | `README.md` |
 | core | claude.template.md | `CLAUDE.md` |
@@ -80,7 +81,7 @@ Never loaded into context (JSON ≠ rule). Read only by future adopt/upgrade run
 
 ## Post-generation verification — ALL must pass
 
-1. Leftover markers: `grep -rn '{{\|ADAPT\|END ADAPT\|IF module\|END IF\|\[markers\]\|\[references\]\|\[lifecycle\]\|\[linear\]\|\[core\]' <target>/.claude <target>/README.md <target>/CLAUDE.md` → zero hits.
+1. Leftover markers: `grep -rn '{{\|ADAPT\|END ADAPT\|IF module\|END IF\|\[markers\]\|\[references\]\|\[lifecycle\]\|\[linear\]\|\[core\]' <target> --exclude-dir=.git` → zero hits. Whole target, not just `.claude/` — container index.md carries slots too.
 2. Garden greps: dry-run every bash command in generated garden skill → executes w/o error (empty results fine).
 3. Cross-references: every file mentioned in any generated rule/skill exists on disk (refs.md, paths.local.md, index.md, responses.md…).
 4. `paths:` frontmatter globs in docs.md/markers.md match actual container dirs created.

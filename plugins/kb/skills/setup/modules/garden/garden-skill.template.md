@@ -27,7 +27,7 @@ Scan all containers ({{container_globs}}). Build proposal list. Apply approved. 
 
 ## Output
 
-Single proposal list grouped by action: **delete** / **fix** / **ask-{{owner_name}}**. Present via AskUserQuestion where choices needed. Apply approved items only.
+Single proposal list grouped by action: **delete** / **fix** / **ask-{{owner_name}}**. Present via AskUserQuestion where choices needed. Apply approved items only. Approved promotions/restructures → delegable per delegation rule model tiers (Opus, not Sonnet).
 
 ## Cadence
 

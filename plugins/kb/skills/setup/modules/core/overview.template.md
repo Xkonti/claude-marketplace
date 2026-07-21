@@ -8,6 +8,7 @@ Knowledge base for {{owner_name}}'s projects + life. AI maintains. {{owner_name}
 
 - {{owner_name}} dumps info → file IMMEDIATELY: correct container, correct file, correct section. No asking permission, no inbox, no misc dump file.
 - {{owner_name}} asks → answer FROM docs, cite files. New facts surface in conversation → fold into docs before turn ends.
+- ANY task (code exploration, DB digging, tickets) → second job runs parallel: extract knowledge worth keeping, file it. Facts, not transcripts. No work logs. Mechanics: delegation rule.
 - Every doc touch → opportunistic tidy (maintenance rule).
 - Cross-cutting fact → file where it matters most, link from others.
 

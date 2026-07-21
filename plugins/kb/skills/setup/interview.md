@@ -51,7 +51,7 @@ Frontmatter minimalism NOT offered as choice — enforced ("field want adding �
 
 ## Fixed — never asked
 
-Split threshold 200 lines, tombstone cap 10, stale windows 30/60 days, caveman for rules + skills, gitignore contents, settings allowlist.
+Split threshold 200 lines, tombstone cap 10, stale windows 30/60 days, caveman for rules + skills, gitignore contents, settings allowlist, delegation policy (dual-job curation, Haiku search / background Sonnet filing).
 
 Doc-body style: caveman default. Subject = human-consumed content (recipes read while cooking, worldbuilding prose) → wizard proposes prose deviation, flagged in Q6 plan for veto.
 

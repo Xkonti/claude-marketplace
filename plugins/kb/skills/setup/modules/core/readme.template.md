@@ -10,6 +10,7 @@ Markdown knowledge base for projects, ongoing life areas, and research. Maintain
 - `projects/` — tracked work. `resources/` — research/reference.
 <!-- END ADAPT -->
 - Docs hold current state only; git history is the archive. No changelogs.
+- The agent works two jobs in parallel: your task, plus extracting and filing whatever new knowledge the task surfaces. Searches and filing get delegated to subagents (fast Haiku lookups, background Sonnet updates) so the main conversation stays on-topic.
 <!-- IF module:markers -->
 - Inline `@todo` / `@question` / `@blocked` / `@due(...)` markers — grep instead of task lists.
 <!-- END IF -->

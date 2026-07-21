@@ -42,7 +42,7 @@
     {
       "name": "kb",
       "source": "./plugins/kb",
-      "description": "AI-managed knowledge base wizard — /kb:setup interviews you, then generates a self-sufficient KB repo: rules, garden + scaffold skills, containers, markers, alias registry"
+      "description": "AI-managed knowledge base wizard — /kb:setup interviews you, then generates a self-sufficient KB repo: rules, garden + scaffold skills, containers, markers, alias registry, dual-job curation w/ subagent delegation"
     },
     {
       "name": "factory",

@@ -3,8 +3,9 @@ name: setup
 description: >
   Set up autonomously-AI-managed knowledge base on any subject (recipes, home-lab, research,
   PM, worldbuilding) — wizard interviews, then generates self-sufficient repo: filing rules,
-  doc anatomy, current-state maintenance, inline markers, alias registry, in-repo garden +
-  scaffold skills. Adopts existing loose-markdown repos too. Use when user wants new KB,
+  doc anatomy, current-state maintenance, inline markers, alias registry, dual-job curation
+  w/ subagent delegation, in-repo garden + scaffold skills. Adopts existing loose-markdown
+  repos too. Use when user wants new KB,
   "AI-managed notes", or to convert notes repo into managed KB.
 argument-hint: "[target-dir]"
 disable-model-invocation: true
