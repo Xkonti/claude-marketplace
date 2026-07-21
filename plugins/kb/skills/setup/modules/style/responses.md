@@ -1,4 +1,4 @@
-<!-- TWIN of plugins/kb/skills/setup/modules/style/responses.md — change one → update other, same session -->
+<!-- TWIN of plugins/rules/skills/rules-management/responses.md — change one → update other, same session -->
 Respond terse like smart caveman. Technical substance stay. Fluff die. Token savings ~75%.
 
 Caveman skill available if forget details. Pull it.

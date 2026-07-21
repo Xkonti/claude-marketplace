@@ -1,6 +1,6 @@
 # Write-Side Design
 
-Aggregates, command handling, streams, consistency boundaries. Every guideline w/ reasoning; `[opinion]` marks contested positions.
+Aggregates, command handling, streams, consistency boundaries. Every guideline w/ reasoning; `[opinion]` marks contested positions. Live-system rule/behavior change requests → [change-intake.md](change-intake.md) first (model-first path), then here.
 
 ## Aggregate Anatomy — decide vs evolve
 

@@ -100,3 +100,25 @@
 **Design notes.** Model explicitly (own State View slice) or treat as implementation detail — explicit preferred `[opinion]`: model ↔ implementation alignment stays checkable. Information completeness check forces the question "where does the name come from?" — lookup table IS the answer, sourced from owning context's facts.
 
 **Related.** DB Projected Read Model (it's one, specialized), Translation (feeding it from external contexts), event-modeling quality.md (completeness check).
+
+## Resource Projection
+
+**Problem.** Data-rich SPA wants resource-style API (`GET /orders`, `/orders/:id`, filters, pagination) loading data dynamically per component. Endpoint-per-modeled-view = endpoint sprawl, fights frontend query-cache libs (per-resource cache keys), slows UI iteration. Yet abandoning use-case modeling for entity modeling = losing the completeness check.
+
+**Shape.** One physical DB projection serves SEVERAL modeled State View slices. Broad query surface (filters, sorting, pagination) over one denormalized resource table. Mapping = first-class artifact: Projection Map in `_design.md` (es-design design-docs.md) — projection ↔ serving slices ↔ endpoints. Model stays use-case-shaped; collapse happens ONLY at design time.
+
+**When.** Multiple plain-display views over same data family; SPA / resource-API delivery; frontend caching keyed per resource; served views have no special consistency or derivation needs.
+
+**When NOT.** At modeling time — never model resource-shaped read models (completeness check dies). Views w/ derived logic, same-tx/hybrid consistency needs, processor consumers, or own version-fencing granularity → dedicated projection (es-design read-side.md grouping rules).
+
+**Trade-offs.**
+- Shared-projection coupling: N views on one table → field additions renegotiate one shared shape, "who owns this column" ambiguity. Universal-model disease in miniature — bounded by invariant: every column traces to a serving slice's read-model attribute.
+- Coarser staleness reasoning: one projection version for many views → fenced polling (es-ops ui.md) fences all-or-nothing.
+- Contamination risk: resource shape tempts "just add it to the Order model" thinking → model rot. Antidote = change intake (es-design change-intake.md): every field addition finds its owning use case first.
+
+**Design notes.**
+- Projection Map = the artifact. Collapse w/o map entry = silent drift — the failure mode this pattern's discipline exists to kill.
+- Start collapsed, split later when a view develops special needs: query surface abstraction keeps clients untouched, replay makes the split cheap.
+- GWTs unaffected: GT scenarios still assert per-slice query results against the shared projection.
+
+**Related.** DB Projected Read Model (base), es-design read-side.md (grouping rules + invariants), es-design change-intake.md (reverse routing), es-ops ui.md (version granularity).

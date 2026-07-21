@@ -25,6 +25,20 @@ Per State View slice — criteria, not dogma:
 
 Decision recorded in slice design block: type + WHY against criteria + consistency window stated (accepted or closed).
 
+## Projection Grouping — the collapse step
+
+Model = use-case-shaped views (correct — completeness checkable). Implementation MAY serve several State View slices from ONE physical projection — data-rich SPAs w/ resource-style APIs (`GET /orders`, filters, per-resource frontend query caches) often want exactly that. Full pattern + trade-offs → es-patterns Resource Projection.
+
+Rules:
+
+1. **Collapse = recorded decision, never silent.** Every grouping lands in Projection Map (`_design.md`, [design-docs.md](design-docs.md)): projection ↔ serving slices ↔ endpoints.
+2. **Two invariants, grep-checkable** (D5 audit):
+   - every State View slice appears in exactly one Projection Map row
+   - every projection column traces to ≥1 serving slice's read-model attribute. Column w/o slice attribute = untraceable data — same red flag as model completeness check, one layer down.
+3. **Dedicated projection still earns keep** for: derived/logic-heavy views, consistency-critical views (same-tx, hybrid), processor-feeding lists (todo-lists), views needing own fenced-polling version granularity (es-ops ui.md — shared projection = one version fencing ALL its views).
+4. **Query surface unchanged**: consumers hit query surface/endpoints, not tables → later split of fat projection = new projectors + replay, clients untouched. Start collapsed, split when a view develops special needs — cheap by design.
+5. **Later changes in endpoint/resource language** → [change-intake.md](change-intake.md), NOT direct column edits. Field addition finds its owning use case in the model first; Projection Map then carries it down.
+
 ## Projector Design
 
 1. **Idempotent handlers.** Upsert beats insert; delete-if-exists beats delete. Why: redelivery + replay both re-run handlers; idempotency makes both boring.

@@ -2,6 +2,8 @@
 
 Every operation ends w/ quick integrity pass ([verification.md](verification.md) § Quick). Procedures assume layout from [structure.md](structure.md).
 
+Change request arriving in IMPLEMENTATION language (endpoint, API field, table, resource) → route via es-design change-intake.md FIRST — it decides whether a ripple here is needed + which slice owns the change. Never translate impl asks into model edits directly.
+
 ## Add slice to existing chapter
 
 1. Write slice in chapter file (notation per event-modeling/notation.md).

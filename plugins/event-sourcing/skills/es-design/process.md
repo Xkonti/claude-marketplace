@@ -35,8 +35,9 @@ Each: decision + rationale + stack binding + `td-N` entry. Defaults marked `[opi
 7. **Processor infrastructure**: how automations run — framework processors w/ position tracking, broker consumers, polling workers. Must answer: position tracking? restart resume? parallelism? replay?
 8. **Replay machinery**: how a projection rebuild is triggered + what clears state. Even if "manual script" — name it.
 9. **Test harness**: GWT → test translation approach per slice type (write-side fixture, projection await-assert, containerized integration). Bind to detected test infra.
+10. **Metadata + PII posture**: correlation/causation propagation plumbing (edge capture, provider components, automation hop rule) named in stack terms; PII scan over model attributes (incl. stream ids from natural keys — undeletable position) → stance per data class: minimalism / crypto shredding / forgettable payload. PULL es-ops metadata.md + gdpr.md for content — day-one decisions, brutal retrofits.
 
-Gate: all nine decided + bound; `_design.md` foundational section complete.
+Gate: all ten decided + bound; `_design.md` foundational section complete.
 
 ## D3 — Streams + Aggregates (context level)
 
@@ -53,7 +54,7 @@ Gate: every fact assigned to stream; every invariant has enforcement home; lifec
 Per chapter file (story order), per slice — design block into `design/NN-<chapter>.md` ([design-docs.md](design-docs.md)). By pattern:
 
 - **State Change** → command handler placement (on aggregate default; external handler when infra deps needed), validation list from GWTs, facts emitted (+ ordering), sourcing handlers updating aggregate state, creation policy (which command births the stream). [write-side.md](write-side.md).
-- **State View** → projection type via selection criteria (single bounded stream → live model candidate; multi-stream / large / query-shaped → DB projection; consistency-critical → same-transaction or hybrid), table/structure shape (denormalized, per-use-case, no joins), query abstraction surface. [read-side.md](read-side.md).
+- **State View** → projection type via selection criteria (single bounded stream → live model candidate; multi-stream / large / query-shaped → DB projection; consistency-critical → same-transaction or hybrid), table/structure shape (denormalized, per-use-case, no joins), query abstraction surface. Then ASSIGN slice to Projection Map row in `_design.md` — existing projection (collapse, e.g. resource-style APIs) or new dedicated one; grouping rules + invariants in [read-side.md](read-side.md).
 - **Automation** → trigger mechanism, processor design, idempotency answer, replay stance (almost always no-replay for side effects), error strategy (from model or → open question), todo-list consideration for multi-step/restartable work. [read-side.md](read-side.md) + es-patterns.
 - **Translation** → inbound adapter (consumer/endpoint) in slice-private module, external payload type private, command issued, ACL note. [integration.md](integration.md).
 - Outbound external facts → publishing chain + dual-write strategy. [integration.md](integration.md).
@@ -69,12 +70,13 @@ Gate per chapter: every slice has design block w/ all sections; chapter design s
 3. **Idempotency audit**: every processor — safe to re-deliver trigger? If not, what dedups (inbox, todo-list state, aggregate flag)?
 4. **Contract inventory**: all external facts in/out — schema, version, owner, transport. Generous-payload check on outbound.
 5. **Eventual-consistency windows**: list every async gap a user/rule can observe; each = accepted (documented) or closed (mechanism named). Unaccepted + unclosed = unresolved design.
+6. **Projection Map symmetry**: every State View slice in exactly one map row; every projection column traces to a serving slice's read-model attribute ([read-side.md](read-side.md) grouping invariants). Asymmetry = silent collapse drift.
 
-Gate: four audits clean or ledgered.
+Gate: all audits clean or ledgered.
 
 ## D6 — Verify + Handoff
 
-1. Coverage: every slice in model ↔ design block. Grep slice IDs both dirs, diff.
+1. Coverage: every slice in model ↔ design block. Grep slice IDs both dirs, diff. State View slices additionally ↔ Projection Map rows.
 2. Every GWT ↔ test plan entry (count per slice, compare).
 3. All `td-N` decisions referenced by at least one slice (zombie decisions = smell).
 4. Model gaps found during design → confirmed present in model spine ledger, not just design notes.
@@ -82,3 +84,7 @@ Gate: four audits clean or ledgered.
 6. `_design.md` status → `designed`. Handoff summary: counts, open questions, suggested first slice.
 
 Session ends mid-design → D6-lite: statuses current, gaps ledgered, "where stopped" note. Design dir resumable cold, same discipline as model-specs.
+
+## After handoff — maintenance
+
+Change requests on designed/implemented system (new field, new screen, endpoint tweak, contract change) → [change-intake.md](change-intake.md). D0–D6 = greenfield run; intake = the standing procedure afterward.
