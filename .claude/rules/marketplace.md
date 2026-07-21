@@ -98,6 +98,10 @@ Forgetting any one → plugin invisible / broken routing.
 - Plugin / skill / agent names must be unique across marketplace
 - Skills auto-namespaced → `/plugin-name:skill-name` (prevents collisions)
 
+## Twin Files
+
+`plugins/rules/skills/rules-management/{responses,_meta}.md` ↔ `plugins/kb/skills/setup/modules/style/{responses,_meta}.md` = byte-twins (modulo TWIN comment). Edit either → sync other, same session. Verify: `diff` pair.
+
 ## Testing + Reload
 
 - Dev: `claude --plugin-dir ./plugins/<name>` — loads plugin w/o install

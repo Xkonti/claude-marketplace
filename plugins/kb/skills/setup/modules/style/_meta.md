@@ -3,7 +3,7 @@ paths:
   - '.claude/rules/**'
 ---
 
-<!-- TWIN of plugins/kb/skills/setup/modules/style/_meta.md — change one → update other, same session -->
+<!-- TWIN of plugins/rules/skills/rules-management/_meta.md — change one → update other, same session -->
 
 ## Rule File Standards
 

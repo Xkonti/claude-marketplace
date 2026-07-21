@@ -1,0 +1,6 @@
+{
+  "name": "kb",
+  "description": "Set up autonomously-AI-managed knowledge base on any subject — /kb:setup wizard generates rules, garden + scaffold skills, containers, markers, alias registry",
+  "version": "1.0.0",
+  "author": { "name": "Xkonti" }
+}
