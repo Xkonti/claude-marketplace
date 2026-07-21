@@ -63,4 +63,4 @@ PR_BODY_TEMPLATE
 
 ## Final Summary
 
-Table: `Issue | Tier | Branch | PR | Result`. Include skipped issues + why (ai:no, conflict-serialized, vague spec).
+Table: `Issue | Tier | Branch | PR | Result`. Include skipped issues + why (ai-no, conflict-serialized, vague spec).

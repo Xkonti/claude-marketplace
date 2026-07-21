@@ -24,7 +24,7 @@ Single = this agent may implement. Batch = this agent ONLY orchestrates ([batch.
 From `$ARGUMENTS`:
 
 - One issue ID → single mode
-- ≥2 IDs, number N, or "all" → batch mode. Candidates = `list_issues` project + `ai-ready`, minus any `ai:no`. Always minus `ai:no`.
+- ≥2 IDs, number N, or "all" → batch mode. Candidates = `list_issues` project + `ai-ready`, minus any `ai-no`. Always minus `ai-no`.
 - Empty → fetch ai-ready list → AskUserQuestion pick one → single mode
 
 ## Step 2 — Options
@@ -42,7 +42,7 @@ One AskUserQuestion, skip anything args already gave. Defaults:
 
 `get_issue` + `list_comments`. Gates:
 
-- `ai:no` → NEVER touch. Skip, tell user why. No exceptions.
+- `ai-no` → NEVER touch. Skip, tell user why. No exceptions.
 - No `ai:` tier label = untriaged → estimate per [rubric.md](rubric.md), `save_issue` apply label, proceed.
 - Spec vague/incomplete → rubric tie-breaker: post clarifying-questions comment, do NOT start, report to user.
 - Already In Progress or has linked PR → confirm w/ user before touching.

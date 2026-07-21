@@ -19,5 +19,5 @@ Estimate at ticket triage. One `ai:` label per issue — mutually exclusive grou
 ## Other Labels
 
 - `ai-ready` — spec complete + unblocked + AI may pick up. Separate decision from tier.
-- `ai:no` — human-only. NEVER work these, never relabel.
+- `ai-no` — human-only. NEVER work these, never relabel.
 - No ai labels at all = untriaged → estimate tier w/ this rubric, apply label, proceed.
