@@ -46,7 +46,8 @@ Index rules:
 - Every defined element gets a row, same edit that defines it.
 - "defined in" = `<file> › slice:<id>` — exact landing spot.
 - References NOT tracked in index — computed via grep when needed ([verification.md](verification.md)). Less maintenance surface, less drift.
-- Chapter status = lowest slice status in file (modeled < gwt-done < verified < implemented).
+- No CODE column either. Model↔code mapping is computed on demand by `scripts/check-model-drift.sh` from anchors + `implemented` status — never hand-kept. A code-path column would couple the index to code layout + rot on every code move (breaks the "IDs ≠ file paths" invariant, rule 3).
+- Chapter status = lowest PROGRESSION status among slices, EXCLUDING `modeled-only` (terminal, not pending work). Ladder: modeled < gwt-done < verified < implemented. All slices `modeled-only` → chapter `modeled-only`. Status values incl. terminal `modeled-only` defined in event-modeling/notation.md § Slice.
 
 ## Chapter file — `NN-<name>.md`
 

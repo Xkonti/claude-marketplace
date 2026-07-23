@@ -21,6 +21,7 @@ Two tiers: Quick (after every edit session) + Full (before declaring model compl
 3. **Index accuracy** — spot-check moved/new definitions: row's file actually contains the definition.
 4. **Status + stamp** — touched files: statuses recomputed, `updated` current.
 5. **Stray TODOs** — `grep -rni "TODO\|FIXME\|???" .` → migrate into Open Questions ledger, delete inline.
+6. **Anchors touched?** — flipped a slice to `implemented`/`modeled-only`, or edited a code anchor → run the drift gate (tier E below). Skip if pure modeling session (no code yet).
 
 ## Full verification (model completion gate)
 
@@ -55,9 +56,28 @@ Two tiers: Quick (after every edit session) + Full (before declaring model compl
 3. Story readback against full model, chapter sequence order.
 4. Open Questions: zero unanswered BLOCKING; provisional decisions reviewed.
 
-### E. Verdict
+### E. Code consistency (model↔code drift gate)
 
-All A–D green → `_model.md` status: `verified`. Anything red → fix or ledger entry; model stays `modeling`. NEVER mark verified w/ known reds — downstream es-design treats `verified` as load-bearing.
+Runs `scripts/check-model-drift.sh` (ships in this skill). Gates the model↔code anchor contract (event-modeling/notation.md § Model↔code anchors).
+
+N/A when zero slices are `implemented` AND zero elements are `modeled-only` — pure-modeling models can't drift against code; tier passes vacuously, report notes `N/A`.
+
+Otherwise MANDATORY. Run from repo root:
+
+```bash
+scripts/check-model-drift.sh --model-dir docs/event-model/<context> --code-root <src-dir>
+```
+
+Checks:
+1. **Missing code** — every anchor of an implementable type (`fact` `cmd` `rm` `proc` `slice`) owned by an `implemented` slice resolves to ≥1 code anchor. Miss → `MISSING-CODE`. (The `implemented` status is a claim; this proves it.)
+2. **Unknown anchor** — every `[type:id]` found in code resolves to a defined model element (or valid slice/flow id). No match → `UNKNOWN-ANCHOR` (typo, or model element renamed/deleted w/o updating code — see operations.md § Rename).
+3. **Modeled-only leak** — every `modeled-only` element/slice is ABSENT from code. Present → `MODELED-ONLY-IN-CODE` (either it's really implemented — drop the marker — or the anchor is stray).
+
+Any finding → tier E RED. Exit 0 = green, 1 = drift, 2 = usage error. Limitations documented in the script header (comment-blind grep, presence-only, exact-match ids).
+
+### Verdict
+
+All A–E green → `_model.md` status: `verified`. Tier E N/A counts as green. Anything red → fix or ledger entry; model stays `modeling`. NEVER mark verified w/ known reds — downstream es-design treats `verified` as load-bearing, and a false `implemented` status is a known red.
 
 ## Verification report
 
@@ -69,6 +89,7 @@ Full pass → append dated report section to `_model.md` (or replace previous):
 - B notation: PASS
 - C cross-file: PASS (1 source-list asymmetry fixed: [rm:cart-items])
 - D completeness: PASS — 0 blocking questions open
+- E code: PASS (or: N/A — no implemented slices | FAIL — 2 drift: 1 MISSING-CODE, 1 UNKNOWN-ANCHOR)
 - Verdict: verified
 ```
 
@@ -80,3 +101,4 @@ Report = proof of process + diff anchor for next verification (changed files sin
 - Typed-ID refs → file moves can't break links; check 1 catches the remaining failure mode (typos, deleted elements).
 - Source-list symmetry (C1) = THE multi-file-specific rot: later chapters extend earlier read models, definition update forgotten. Highest-yield check in the battery.
 - Mechanical greps before judgment passes → agent burns judgment budget on D (the genuinely hard part), not bookkeeping.
+- Anchor gate (E) = model↔code rot guard. `implemented` status is a claim; anchors make it provable. Catches: renamed model element w/ stale code anchor, `implemented` slice never actually coded, `modeled-only` element that quietly got built. Cheap grep, blocking for `verified` — a lying status is worse than an incomplete one.
