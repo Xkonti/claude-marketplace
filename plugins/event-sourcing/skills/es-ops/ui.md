@@ -6,7 +6,20 @@ THE first-contact problem: button click → command accepted → screen re-rende
 
 1. **Commands return context, not data.** Write op returns acknowledgment + COORDINATES: stream id + resulting sequence/version number. Not the updated view (that's read side's job — CQRS), but enough for the client to know WHAT to wait for. `[opinion — some call any return value CQRS-impure; returning execution context ≠ reading state, and it's the enabler for everything below]`
 2. **Projections track their version.** Projector persists, per instance, the last-applied sequence number alongside projected data (or a side version table; multiple projections from one stream → version row each). Now "has this view caught up to MY write?" = comparable numbers. Collapsed resource projections serving several views (es-design Projection Map) → ONE version fences all of them; view needing finer fencing granularity → dedicated projection, weigh at grouping time (es-design read-side.md).
-3. **Frontend mirrors slices.** UI components/folders per slice, same names as backend modules (command wrapper per State Change, view component per State View). Same navigability argument as vertical slices; UI change → matching slice obvious. BFF aggregation layer: skeptically `[opinion]` — convenient at first, tends to grow own logic/lifecycle + recouple slices the architecture decoupled; default to per-slice endpoints, BFF only w/ concrete multi-client driver.
+3. **Frontend mirrors slices.** UI components/folders per slice, same names as backend modules (command wrapper per State Change, view component per State View). Same navigability argument as vertical slices; UI change → matching slice obvious.
+
+## No composition layer
+
+Hard stance, not a preference `[opinion — held firm, reasoned]`: NO server-side composition / BFF / aggregation tier. HTTP endpoint = thin 1:1 translation of ONE command or ONE query, ideally generated from the contract. Why: a BFF grows own logic + lifecycle, recouples slices the architecture split, and owns a shape no slice owns → the drift home. Endpoint sprawl is not the enemy; a hidden second model is.
+
+**Multi-view screen → client-side parallel composition (default).** Screen needs 5 read models → client fires 5 queries in parallel, assembles in the component. Each query = own slice, own version, own fence. Server stays dumb.
+
+**Multi-command intent → not one endpoint.** One user intent = one command (may carry a list). Intent touching several aggregates = NOT a fat endpoint → Automation/Processor (es-design write-side.md coordination ladder — machinery already exists). No endpoint issues 2+ commands.
+
+**Promotion path when client composition outgrows.** Client-side compose costs, stated honest: N requests per screen; composed freshness = STALEST member, no single version to fence the screen against. When that bites — screen needs server-owned consolidation OR one fenceable version — DON'T build a BFF. Model a new State View:
+- consolidation is DERIVATION (counts, sums, joins-worth of logic) → **Logic Read Model** (es-patterns).
+- consolidation is pure gather (co-locate fields, no derivation) → **ordinary consolidating projection**.
+Either way = modeled slice, own `[rm:]`, own version, own tests — visible in model, not hidden in a gateway.
 
 ## Pattern: Fenced Polling
 
@@ -41,6 +54,8 @@ Reverse the direction: client holds open connection, server notifies on change.
 | same, server can't hold requests | client-side fenced polling |
 | background changes, modest freshness needs | version poll on interval |
 | live dashboards, frequent background changes | SSE push (+ pull fallback) |
+| multi-view screen (several read models) | client-side parallel composition (default) — one query per slice |
+| composed screen outgrows client (needs server consolidation / one fenceable version) | modeled State View — Logic Read Model (derivation) / consolidating projection (gather) — es-design read-side.md |
 | one screen genuinely needs zero gap | same-tx / hybrid projection — backend answer, es-design read-side.md |
 
 Universal rule: give the client maximum CONTEXT (which version to expect, what changed) — blind polling and blind pushing both waste the information the system already has.
