@@ -91,7 +91,7 @@ Goal: every screen + process fed by use-case-specific read model.
 1. Per screen, work backwards: which fields → which read model attributes?
 2. Define read model + attribute table. Header lists ALL source facts.
 3. Per attribute: which fact delivers it? None → information completeness violation → either add to existing fact (then P4 ripples: command must supply too) or new fact needed → new use case discovered.
-4. Read models serve use cases, not entities. "What answers THIS question" not "the Subscriber object". Same data, different question → different read model. Cheap by design.
+4. Read models serve use cases, not entities. Unit = information need, not screen instance. Same info feeding 3 screens = ONE read model, reuse its `[rm:]` id — don't clone per screen. Different question over same facts = new read model (cheap). List / filter / catalog screen = valid single read model; filters + pagination are impl detail — model the information, not the query params.
 5. Derived values (totals): decide stored-on-fact vs computed-in-read-model. Insufficient info → pick read-model side, log provisional decision.
 6. Later facts changing earlier read models (archived item disappears from list) → update source list of earlier read model, note in current slice.
 

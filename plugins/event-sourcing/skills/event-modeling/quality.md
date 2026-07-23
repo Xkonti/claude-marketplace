@@ -59,7 +59,7 @@ Cheap, powerful, run often:
 | Anti-pattern | Smell | Fix |
 |---|---|---|
 | Noun-first modeling | Started w/ entities + attributes, facts retrofitted | Restart from facts: what HAPPENS? |
-| General-purpose read model | One model serving N use cases "efficiently" | Split per use case — models cheap |
+| Entity-shaped read model | Model = "the X object" / serves no stated question / nullable-field dump feeding unrelated screens | Reshape per information need. One model reused across N screens sharing ONE question ≠ this smell — reuse-by-need legal. Genuine N:1 collapse = design-time (es-design), not model-time. List/filter views = legit needs, not this smell |
 | Implementation modeling | Model mirrors current code/tables instead of information flow | Model what business does, not what code does |
 | Branching timeline | if/else, loops drawn into flow | One flow per path; good case main, rest `## Flow:` |
 | Validate-on-read | Read model re-checks write rules | Trust stored facts; rules at command |

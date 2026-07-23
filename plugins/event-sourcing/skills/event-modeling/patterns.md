@@ -18,7 +18,13 @@ Instruction to system: do this. Imperative ("Subscribe"). May be rejected — th
 
 ### Read model (green)
 
-Question the system answers from stored facts. Data + provenance, zero implementation. Feeds screens AND processors. Can only contain what facts deliver — nothing else exists. Use-case-shaped, never entity-shaped. Optional table-with-example-rows rendering aids developers — but beware implying implementation.
+Question the system answers from stored facts. Data + provenance, zero implementation. Feeds screens AND processors. Can only contain what facts deliver — nothing else exists.
+
+Use-case-shaped, never entity-shaped. Unit = the INFORMATION NEED, not the screen. Same info answering N screens' one question = ONE read model, one `[rm:]` id, reused. Different question over same facts = different read model (cheap by design). Entity-shaped smell = "the Subscriber object, serves everything"; need-shaped = "confirmed-subscribers, answers 'who can we email'".
+
+List / filter / catalog views ARE needs — a filterable catalog or a paginated listing = one State View. The INFORMATION is modeled; filter params + page size + sort = implementation detail, NOT modeled, NOT timeline branches (Hard Rule 4 unbroken). Don't shatter one catalog into per-filter read models.
+
+Optional table-with-example-rows rendering aids developers — but beware implying implementation.
 
 ### Screen
 
@@ -108,3 +114,12 @@ Rules:
 Slice = smallest functional unit = one pattern instance = one ticket (~≤1 dev-day). Chapters → epics. GWTs → tests, near-mechanical translation. Slices implementable in any order — facts define contracts between them. Model marks status per slice → progress tracking lives in model.
 
 Event Modeling + vertical slice architecture = natural fit: State Change slice → write op package, State View slice → read op package, Automation → processor package. Detail → es-design skill.
+
+### API surface derives from the slice inventory
+
+Exposed API = a projection of the model, 1:1:
+- Every State View slice → one read surface entry (the information it exposes).
+- Every State Change slice's command → one write surface entry (the intent it accepts).
+- No slice → no endpoint. Endpoint w/ no backing slice = ungoverned surface (drift gate catches it — the endpoint code's `[slice:]`/`[cmd:]`/`[rm:]` anchor resolves to nothing).
+
+States DERIVATION DIRECTION, not transport. Route, verb, status code, pagination + filter params = implementation-side, chosen at build time — NOT modeled (model elements stay transport-free, Hard Rule 3 holds). List/filter State Views map to resource-style list endpoints; their filter params are impl detail (see Read model granularity, above). Model answers WHAT info is exposed + WHAT intents accepted; implementation answers HOW.
