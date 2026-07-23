@@ -1,5 +1,5 @@
 {
   "name": "event-sourcing",
-  "description": "Event Modeling + Event Sourcing skills — plan systems w/ event models, design streams/aggregates/projections, apply ES patterns",
-  "version": "0.7.0"
+  "description": "Event Modeling + Event Sourcing skills \u2014 plan systems w/ event models, design streams/aggregates/projections, apply ES patterns",
+  "version": "0.8.0"
 }

@@ -19,7 +19,7 @@ Map request to existing artifacts:
 Does change alter WHAT information exists, WHERE it comes from, or a BUSINESS rule?
 
 - YES → **model-first path**. No exceptions — even when edit "obviously" lands in one projection.
-- NO — only HOW data stored/served/shaped in transport (index, pagination, endpoint split/merge, caching, projection type swap, retry tuning) → **design-only path**.
+- NO — only HOW data stored/served/shaped in transport (index, pagination, endpoint split — never MERGE, merging queries into one endpoint = composition, forbidden es-ops ui.md — caching, projection type swap, retry tuning) → **design-only path**.
 
 Ambiguous → treat as model-first; the walk is cheap, either confirms or produces design-only verdict w/ evidence.
 
@@ -36,7 +36,7 @@ Ambiguous → treat as model-first; the walk is cheap, either confirms or produc
 ### Design-only path (technical changes)
 
 1. Edit design block(s) + `td-N` / `dq-N` as needed.
-2. Projection Map kept consistent: endpoint renamed/split/merged → map row updated SAME edit.
+2. Projection Map kept consistent: endpoint renamed/split → map row updated SAME edit (merge = composition, forbidden).
 3. Model untouched — except statuses where implementation state changed (per design-docs.md sync rules).
 
 ### New-behavior path
@@ -47,7 +47,7 @@ Request = new capability (new flow, automation, integration) → normal event-mo
 
 Rules keeping implementation shapes OUT of model:
 
-1. Model read models stay use-case-shaped FOREVER. Resource shape exists ONLY in Projection Map. Model never gains an "Order" read model because impl has an `orders` table.
+1. Model read models stay use-case-shaped FOREVER. Three different things: a list/filter view serving a real information need = a use case, modeled (resource-STYLE fine); physical table sharing = Projection Map only; an entity-mirror read model w/ no stated question ("Order" because impl has an `orders` table) = forbidden, the contamination this guard exists for.
 2. No model elements named after endpoints/tables/resources. Business language test applies: SME understands "vendor orders view", not "orders resource".
 3. New screen recombining EXISTING data → lightweight model addition: screen + State View slice referencing existing facts, no new facts. Cheap, keeps model = ops map (es-ops cross-cutting principle: model currency).
 4. Business-behavior question surfacing mid-intake → `q-N` in model ledger, never `dq-N`.
@@ -58,4 +58,5 @@ Rules keeping implementation shapes OUT of model:
 - [ ] Model-first: ripple complete (no half-chains), affected chapters re-verified
 - [ ] Projection Map symmetric: every touched slice ↔ map row consistent
 - [ ] Statuses + `updated` stamps current in touched files
+- [ ] Code anchors updated if a slice/element was renamed/moved (drift gate stays green)
 - [ ] Anything deferred → ledger entry, not memory

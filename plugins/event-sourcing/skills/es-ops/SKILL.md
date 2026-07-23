@@ -28,7 +28,7 @@ Core unit = **business fact**. Never bare "event" in prose. Composites: business
 
 1. **Day-one decisions, day-N payoffs.** Metadata strategy, revision field, PII handling = cheap at design time, brutal retrofits. When advising greenfield projects: flag these three even if unasked. es-design forces them: D2.2 (revision) + D2.10 (metadata + PII posture) — design runs skipping either = incomplete.
 2. **Business language survives operations too.** Failure processes, data purges, period closes — model + name them as business facts/processes where business cares; infra mechanics where only ops cares. Same boundary rule as es-design.
-3. **The model is the ops map.** Where is this attribute used? Which projections touch PII? What breaks if this fact changes? — event model + element index (model-specs) answers; keep it current or lose the map.
+3. **The model is the ops map.** Where is this attribute used? Which projections touch PII? What breaks if this fact changes? — event model + element index (model-specs) answers; keep it current or lose the map. Mechanism, not just discipline: model↔code `[type:id]` anchors + the model-specs reference gate (es-design hard rule 12 / D6) keep the map honest automatically — dangling anchor or unanchored slice fails CI, so the map can't silently rot.
 4. **Immutability is the constraint AND the tool.** Can't edit facts → corrections = new facts, deletions = key destruction or external payload removal, schema changes = read-time translation. Every ops technique here = working WITH immutability, never around it.
 
 ## Scope Handoffs

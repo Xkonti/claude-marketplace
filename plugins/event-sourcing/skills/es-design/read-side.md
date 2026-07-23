@@ -27,17 +27,18 @@ Decision recorded in slice design block: type + WHY against criteria + consisten
 
 ## Projection Grouping — the collapse step
 
-Model = use-case-shaped views (correct — completeness checkable). Implementation MAY serve several State View slices from ONE physical projection — data-rich SPAs w/ resource-style APIs (`GET /orders`, filters, per-resource frontend query caches) often want exactly that. Full pattern + trade-offs → es-patterns Resource Projection.
+Model = information-need-shaped views (one need reused across screens = ONE read model already — model consolidated it; completeness stays checkable). Implementation MAY back several DISTINCT State View slices w/ ONE physical projection when they fold the same fact family. Collapse is PHYSICAL ONLY: each slice keeps own query + own per-query endpoint (1:1 — never merge queries into a resource endpoint; that's forbidden composition, es-ops ui.md). Expect FEWER collapses than a naive entity model — model already merged reuse; what remains = genuine N-needs-1-fact-family case. Full pattern + trade-offs → es-patterns Resource Projection.
 
 Rules:
 
-1. **Collapse = recorded decision, never silent.** Every grouping lands in Projection Map (`_design.md`, [design-docs.md](design-docs.md)): projection ↔ serving slices ↔ endpoints.
+1. **Collapse = recorded decision, never silent.** Every grouping lands in Projection Map (`_design.md`, [design-docs.md](design-docs.md)): projection ↔ serving slices ↔ per-slice endpoints ↔ code anchors.
 2. **Two invariants, grep-checkable** (D5 audit):
    - every State View slice appears in exactly one Projection Map row
    - every projection column traces to ≥1 serving slice's read-model attribute. Column w/o slice attribute = untraceable data — same red flag as model completeness check, one layer down.
-3. **Dedicated projection still earns keep** for: derived/logic-heavy views, consistency-critical views (same-tx, hybrid), processor-feeding lists (todo-lists), views needing own fenced-polling version granularity (es-ops ui.md — shared projection = one version fencing ALL its views).
-4. **Query surface unchanged**: consumers hit query surface/endpoints, not tables → later split of fat projection = new projectors + replay, clients untouched. Start collapsed, split when a view develops special needs — cheap by design.
+3. **Dedicated projection still earns keep** for: derived/logic-heavy views, consistency-critical views (same-tx, hybrid), processor-feeding lists (todo-lists), views needing own fenced-polling version granularity (es-ops ui.md — shared projection = one version fencing ALL its views), server-owned consolidation promoted from client composition (es-ops ui.md).
+4. **Query surface unchanged by collapse.** WITHIN a real fact-family group: start collapsed, split later (new projectors + replay, clients untouched — cheap). But collapse ONLY genuine same-fact-family groups — the model already merged cross-screen reuse, so most read models stand alone. Don't manufacture a shared table to look tidy.
 5. **Later changes in endpoint/resource language** → [change-intake.md](change-intake.md), NOT direct column edits. Field addition finds its owning use case in the model first; Projection Map then carries it down.
+6. **Endpoints stay 1:1 per query — always.** Collapse never merges endpoints. Shared projection still exposes one endpoint per serving query (filters/pagination = that query's params). One endpoint serving 2+ queries = composition = forbidden (es-ops ui.md). Projection Map endpoint column lists one per serving slice.
 
 ## Projector Design
 

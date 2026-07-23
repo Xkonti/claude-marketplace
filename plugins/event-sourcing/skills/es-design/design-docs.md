@@ -38,10 +38,10 @@ updated: <date>
 - <rule> → strategy (accept+compensate / redesign / reservation / DCB) + rationale
 
 ## Projection Map
-| projection | serves slices | query surface / endpoints | consistency |
-|---|---|---|---|
-| orders-table | [slice:order-list], [slice:order-detail], [slice:vendor-orders] | GET /orders, GET /orders/:id | eventual |
-| publish-todo | [slice:publish-cart] | internal (processor query) | same-tx |
+| projection | serves slices | per-slice endpoints | code anchors | consistency |
+|---|---|---|---|---|
+| orders-table | [slice:order-list], [slice:order-detail], [slice:vendor-orders] | GET /orders, GET /orders/:id, GET /vendor-orders | [slice:order-list], [slice:order-detail], [slice:vendor-orders] on projector | eventual |
+| publish-todo | [slice:publish-cart] | internal (processor query) | [slice:publish-cart] on projector | same-tx |
 
 ## Open Design Questions
 - [ ] dq-1 **BLOCKING**: <question> — blocks [slice:x] design
@@ -61,6 +61,7 @@ Rules:
 - `dq-N` = design question. Question about BUSINESS behavior → belongs in MODEL ledger (via model-specs ops), not here. dq = purely technical unknowns (capability, infra, stack).
 - `model-version` pins which verification the design trusts. Model re-verified later w/ changes → diff chapters, re-design affected slices; Projection Map routes further to affected projections.
 - Projection Map = canonical collapse record. Every State View slice → exactly one row; every projection column traces to a serving slice attribute ([read-side.md](read-side.md) grouping invariants). One map row = one implementation unit for reads — its serving slices advance status together. Changes arriving in endpoint/resource language → [change-intake.md](change-intake.md).
+- Projection Map endpoints stay per-serving-slice (1:1, never merged — merging = composition, forbidden, es-ops ui.md). Every serving slice's `[slice:]` anchor present in the projection code; collapse is physical-only. Expect fewer collapses than a naive entity model — the model already consolidated reuse.
 
 ## `design/NN-<chapter>.md` — chapter design
 
@@ -88,6 +89,7 @@ Decisions used: td-1, td-4, td-5
 | sourcing handlers | track item ids + prices for validation | cart/domain |
 
 **Facts emitted**: [fact:cart-created] (if new stream), then [fact:item-added] — order matters.
+**Anchors** (code carries these): [slice:add-item], [fact:cart-created], [fact:item-added]. Model-specs gate verifies presence + resolution.
 **Creation**: this command creates stream if absent (creation policy: create-if-missing).
 **Validation** (from GWTs): max 3 items → reject; …
 **Consistency**: n/a (single stream).
@@ -103,7 +105,7 @@ Decisions used: td-1, td-4, td-5
 **Notes / bindings**: <stack-specific mapping — annotations, config keys — ONLY here, never in role tables>
 ```
 
-Block sections per slice type — State Change as above; variations:
+Block sections per slice type — every block lists its **Anchors** set (the gate's target); State Change as above; variations:
 - **State View**: + `Projection type` (live / db / hybrid + WHY vs criteria), `Projection Map row` (which projection serves this slice — dedicated or collapsed, w/ rationale), `Structure` (table/shape w/ index notes), `Query surface` (query object + result, the abstraction other slices call), `Consistency` (accepted window or closure mechanism).
 - **Automation**: + `Trigger` (fact / schedule / poll), `Reads` (which query surface), `Issues` (commands), `Idempotency` (mechanism), `Replay stance` (no-replay mark + why), `Error strategy` (one of four, w/ business source).
 - **Translation**: + `Inbound adapter` (transport, slice-private), `External payload type` (private), `Command issued`, `ACL note` (what changes when provider changes — should be: this slice only).

@@ -23,7 +23,26 @@ Every element gets stable kebab-case ID, typed prefix:
 | Slice | `slice:` | `[slice:add-item]` |
 | Flow | `flow:` | `[flow:submit-error]` |
 
-Reference anywhere via `[type:id]`. Reuse = same ID (replaces whiteboard practice of linking duplicated elements w/ arrows). Rename → update all references same edit.
+Reference anywhere via `[type:id]`. Reuse = same ID (replaces whiteboard practice of linking duplicated elements w/ arrows). For read models reuse IS the granularity rule: one `[rm:]` per information need, reused wherever that need recurs — not one per screen. Rename → update all references same edit.
+
+## Model↔code anchors
+
+Typed ID crosses into code as an ANCHOR: a comment carrying the exact `[type:id]` token, on the code artifact implementing that element. Gives bidirectional trace — model id ↔ code artifact, both greppable. A drift gate (model-specs skill, verification tier E) checks the trace both ways.
+
+Convention — language-agnostic:
+- Primary code artifact for an element carries a comment holding the VERBATIM bracketed token: `[cmd:add-item]`, `[rm:cart-items]`, `[fact:item-added]`, `[proc:cart-publisher]`, `[slice:add-item]`. Comment leader irrelevant (`//`, `#`, `--`, `/* */`, `<!-- -->`) — the token is what the gate greps, not the syntax.
+- Token EXACT: same type, same kebab id, brackets included. Typo / case change = broken link.
+- ≥1 anchor per implemented element. Multiple artifacts MAY share one anchor (command record + its handler both carry `[cmd:add-item]`) — redundancy fine, gate needs ≥1.
+- Anchored types: `fact`, `cmd`, `rm`, `proc`, `slice`. `screen:` = UI, `xfact:` = external contract — anchor optional, NOT gated.
+
+Example (comment syntax irrelevant):
+
+```
+// [cmd:add-item] — adds a line to the cart
+record AddItem(cartId, sku, qty)
+```
+
+Why here: the anchor reuses THIS file's typed-ID token as an identity bridge — how the model's identifiers appear in code is notation. Enforcement (drift gate) lives in model-specs; syntax lives here. This is the ONE code-facing convention in the modeling notation; everything else stays information-flow only.
 
 ## Document structure (top → bottom)
 
@@ -101,10 +120,12 @@ Smallest functional unit. One pattern instance each ([patterns.md](patterns.md))
 
 ```markdown
 #### Slice: subscribe [State Change]
-Status: modeled | gwt-done | verified | implemented
+Status: modeled | gwt-done | verified | implemented | modeled-only — <why not built>
 ```
 
-Status drives resumability — any session picks up where last stopped.
+`modeled → gwt-done → verified → implemented` = progression (drives resumability — any session picks up where last stopped). `modeled-only` = terminal + orthogonal: deliberately NOT implemented (a modeled boundary, an external-owned capability, a deferred slice). Reason mandatory — self-justifying. A modeled-only slice + every element it introduces are EXEMPT from the model↔code drift gate (nothing to find in code); if their anchors show up in code anyway, gate flags it — either implement it (drop the marker) or the anchor is stray.
+
+`implemented` is machine-checkable, not free-text: the gate resolves every element of an `implemented` slice to a code anchor. Marking `implemented` with no anchors = gate red.
 
 ### Element blocks inside slice
 
@@ -143,6 +164,14 @@ Status drives resumability — any session picks up where last stopped.
 ```
 
 Read model header lists ALL source facts — incl. later facts that affect it (replaces whiteboard practice of dotted back-arrows). Fact affecting earlier read model → add to that header, note in slice that introduced it.
+
+Element deliberately unbuilt inside an otherwise-implemented slice → append `— modeled-only` to its header line:
+
+```markdown
+**Read model** [rm:subscriber-detail] — modeled-only — sources: [fact:subscriber-added]
+```
+
+Same exemption + flag-if-in-code as slice-level `modeled-only`. Rare — prefer slice-level unless one element genuinely lags its slice.
 
 **Processor** — automation gear. One line: trigger + reads + issues:
 

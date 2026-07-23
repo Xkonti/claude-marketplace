@@ -71,7 +71,7 @@
 
 **Shape.** Read model carries computed attributes alongside projected ones. Computation runs in fold (live model) or query handler (DB projection) — sometimes persisted by projector, sometimes computed at read time.
 
-**When.** Value derivable purely from facts already in the system; computation cheap enough for read path; rule may evolve (computing at read = rule change needs no replay, no fact versioning).
+**When.** Value derivable purely from facts already in the system; computation cheap enough for read path; rule may evolve (computing at read = rule change needs no replay, no fact versioning). ALSO: a client-side-composed multi-view screen outgrew composition (needs server-owned consolidation + one fenceable version) and the consolidation is DERIVATION → Logic Read Model is the promotion target (pure gather, no derivation → ordinary consolidating projection instead). See es-ops ui.md § No composition layer.
 
 **When NOT.** Computation needs external calls or non-fact state — hard rule: **read model logic must be side-effect-free + derived from stored facts only**. External data needed → that's an integration (translate it in as facts first). Expensive computation on hot read path → precompute via projector or automation w/ stored fact.
 
@@ -79,7 +79,7 @@
 - Logic placement debates `[opinion — this rule is one school; some teams ban read-model logic entirely]`. The side-effect-free constraint is what makes it safe: deterministic, replayable, testable.
 - Computed-at-read values invisible to SQL/filters; need them queryable → persist via projector instead.
 
-**Design notes.** Decide stored-vs-computed per attribute, record in design doc (es-design slice block). GT scenarios w/ concrete numbers pin the derivation rules ("add 5.00 € item → total 5.00 €").
+**Design notes.** Decide stored-vs-computed per attribute, record in design doc (es-design slice block). GT scenarios w/ concrete numbers pin the derivation rules ("add 5.00 € item → total 5.00 €"). The slice's `[rm:]` code anchor ties the computed read model back to the model; the drift gate keeps the derivation rule's home honest (es-design).
 
 **Related.** Live Model, DB Projected Read Model, event-modeling (totalPrice modeling decision shape).
 
@@ -97,28 +97,33 @@
 - Per-slice copies `[opinion]`: keep lookup tables slice-local even when identical — sharing one global lookup = coupling every slice to it (the chapter-10 disease in miniature). Cost: duplicate tiny tables + duplicate projectors. Cheap by design; the rule's value = killing the recurring "can we share it?" debate.
 - Lookup contents eventually consistent w/ owning context → display may briefly lag renames. Almost always fine; document.
 
-**Design notes.** Model explicitly (own State View slice) or treat as implementation detail — explicit preferred `[opinion]`: model ↔ implementation alignment stays checkable. Information completeness check forces the question "where does the name come from?" — lookup table IS the answer, sourced from owning context's facts.
+**Design notes.** Model explicitly (own State View slice) or treat as implementation detail — explicit preferred `[opinion]`: model ↔ implementation alignment stays checkable — concretely via the `[rm:]` code anchor + model-specs drift gate (es-design). Information completeness check forces the question "where does the name come from?" — lookup table IS the answer, sourced from owning context's facts.
 
 **Related.** DB Projected Read Model (it's one, specialized), Translation (feeding it from external contexts), event-modeling quality.md (completeness check).
 
 ## Resource Projection
 
-**Problem.** Data-rich SPA wants resource-style API (`GET /orders`, `/orders/:id`, filters, pagination) loading data dynamically per component. Endpoint-per-modeled-view = endpoint sprawl, fights frontend query-cache libs (per-resource cache keys), slows UI iteration. Yet abandoning use-case modeling for entity modeling = losing the completeness check.
+**Problem.** Several DISTINCT modeled State View read models fold the SAME fact family. One physical table + projector + replay each = duplicated projectors over the same facts, N replays where 1 does. Want one physical projection backing several modeled views — WITHOUT merging the views or their endpoints (merging kills the completeness check + the per-query version fence).
 
-**Shape.** One physical DB projection serves SEVERAL modeled State View slices. Broad query surface (filters, sorting, pagination) over one denormalized resource table. Mapping = first-class artifact: Projection Map in `_design.md` (es-design design-docs.md) — projection ↔ serving slices ↔ endpoints. Model stays use-case-shaped; collapse happens ONLY at design time.
+**Shape.** One physical DB projection (one denormalized table + one projector) serves SEVERAL modeled State View slices. Each slice keeps its OWN query + its OWN endpoint — 1:1, per-query; collapse is PHYSICAL only, never at the endpoint. Filters/sorting/pagination = per-query params, not a merge. Mapping = first-class artifact: Projection Map in `_design.md` (es-design design-docs.md) — projection ↔ serving slices ↔ per-slice endpoints ↔ code anchors. Model stays use-case-shaped; collapse happens ONLY at design time, ONLY on the physical layer. ("Resource" here = the shared physical resource table, not an HTTP resource endpoint.)
 
-**When.** Multiple plain-display views over same data family; SPA / resource-API delivery; frontend caching keyed per resource; served views have no special consistency or derivation needs.
+**When.** Several modeled views over the same fact family, none w/ special needs (below); sharing the physical table saves real projector/replay duplication. Expect this LESS than a naive entity model would — the model already consolidates by information need (one need reused across screens = ONE read model already), so many would-be collapses never arise. What's left = genuine N-distinct-needs-over-1-fact-family remainder.
 
-**When NOT.** At modeling time — never model resource-shaped read models (completeness check dies). Views w/ derived logic, same-tx/hybrid consistency needs, processor consumers, or own version-fencing granularity → dedicated projection (es-design read-side.md grouping rules).
+**When NOT.**
+- At modeling time — never merge distinct information needs into one physical-shaped read model to "match a table"; completeness check dies. One information need = one `[rm:]` (consolidation of reuse = the MODEL's job — event-modeling — not a design-time collapse).
+- Served view has derived logic, same-tx/hybrid consistency, a processor consumer, or needs own version-fencing granularity → dedicated projection (es-design read-side.md grouping).
+- Views only "feel" related but fold different fact families → separate projections; forced sharing = coupling.
 
 **Trade-offs.**
 - Shared-projection coupling: N views on one table → field additions renegotiate one shared shape, "who owns this column" ambiguity. Universal-model disease in miniature — bounded by invariant: every column traces to a serving slice's read-model attribute.
 - Coarser staleness reasoning: one projection version for many views → fenced polling (es-ops ui.md) fences all-or-nothing.
-- Contamination risk: resource shape tempts "just add it to the Order model" thinking → model rot. Antidote = change intake (es-design change-intake.md): every field addition finds its owning use case first.
+- Contamination risk: the shared table tempts collapsing past the physical layer — one endpoint for two queries, one read model "to match the table". Antidote = endpoints stay per-query (es-ops ui.md) + change intake (es-design change-intake.md): every field addition finds its owning use case first.
 
 **Design notes.**
 - Projection Map = the artifact. Collapse w/o map entry = silent drift — the failure mode this pattern's discipline exists to kill.
-- Start collapsed, split later when a view develops special needs: query surface abstraction keeps clients untouched, replay makes the split cheap.
+- Endpoints unchanged by collapse — one per serving query, always.
+- Projection code carries a `[slice:]` anchor per serving slice; the model-specs drift gate checks them.
+- WITHIN a real fact-family group: start collapsed, split later when a view develops special needs — query surface abstraction keeps clients untouched, replay makes the split cheap.
 - GWTs unaffected: GT scenarios still assert per-slice query results against the shared projection.
 
 **Related.** DB Projected Read Model (base), es-design read-side.md (grouping rules + invariants), es-design change-intake.md (reverse routing), es-ops ui.md (version granularity).

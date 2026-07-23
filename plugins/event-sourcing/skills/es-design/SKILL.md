@@ -48,6 +48,7 @@ Minimum before designing: process.md + design-docs.md.
 9. **Slice independence survives design.** One slice = one design unit = independently buildable. Cross-slice access only via exposed query interfaces + facts. Trust facts: no re-validation downstream.
 10. **Every GWT → test plan entry.** Scenarios from model translate ~mechanically to executable specs; design doc says how, per slice type.
 11. **Collapse recorded, changes routed.** State View slices may share one physical projection ONLY via Projection Map entry ([read-side.md](read-side.md) grouping). Change requests in implementation language (endpoint, field, resource) → [change-intake.md](change-intake.md), never direct edits.
+12. **Code anchors bind to model.** Implemented slice code carries `[type:id]` anchors in comments (`[slice:]`, `[fact:]`, `[rm:]`) naming the model elements it realizes; a model-specs reference gate checks BOTH directions. Anchor missing on an implemented slice, or pointing at a dead/renamed element = drift — caught mechanically (D6 + CI), not by review. Design blocks + Projection Map rows record the expected anchor set so the gate has a target.
 
 ## Workflow Summary
 

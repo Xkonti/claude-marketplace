@@ -36,7 +36,18 @@ ID change = global operation:
 1. `grep -rn "<old-id>" docs/event-model/<context>/` → full hit list.
 2. Replace ALL occurrences (definition, references, GWTs, Story, Element Index, ledger mentions) — one session, no partial renames.
 3. Re-grep old ID → must return zero.
-4. Log `d-N` if rename reflects domain insight (usually does — name changes = learning).
+4. Code anchors carry the ID too. `grep -rn "\[<type>:<old-id>\]" <code-root>` → update every anchor COMMENT to the new id (comments only — renaming the code identifier itself is a separate refactor).
+5. Re-run `scripts/check-model-drift.sh` → green. A model rename w/o updating code anchors is exactly the drift the gate flags (stale code anchor → UNKNOWN-ANCHOR).
+6. Log `d-N` if rename reflects domain insight (usually does — name changes = learning).
+
+## Implement a modeled-only element
+
+Terminal `modeled-only` became real work:
+
+1. Drop the `modeled-only` marker (slice Status → progression value, or remove element-level `— modeled-only`).
+2. Add the code anchor(s) in the implementing artifact(s).
+3. Set slice Status → `implemented` only when anchors exist (gate checks it).
+4. Run drift gate → the element flips from "exempt / flag-if-present" to "must-resolve"; confirm green.
 
 ## Move slice between chapters
 
@@ -83,5 +94,5 @@ Last resort (gaps exhausted):
 Mirrors event-modeling P9-lite, file-level:
 - Statuses current in all touched files; `updated` stamped.
 - New unknowns → `_model.md` Open Questions (NEVER scattered TODO comments in chapter files).
-- Quick integrity pass.
+- Quick integrity pass. Touched code anchors OR flipped a slice to `implemented`/`modeled-only` this session → also run `scripts/check-model-drift.sh` (verification.md tier E).
 - Stopped mid-operation (split/rename half-done) → FINISH the operation or revert; never leave model between states overnight.

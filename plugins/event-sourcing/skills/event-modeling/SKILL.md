@@ -69,7 +69,7 @@ Three loops, detail in [phases.md](phases.md):
 2. Information completeness check: every attribute on every element traces to source. Untraceable attribute → red flag, never silently invent. Procedure in [quality.md](quality.md).
 3. Model information flow, not implementation. DB/REST/Kafka/framework talk → redirect to data. Implementation lives in sibling skills.
 4. One timeline per flow. No branches, no loops, no conditions in model. Alternative path → separate flow.
-5. Use-case-specific read models. Model shaped by use case, never general-purpose "entity" model.
+5. Read models use-case-shaped, never entity-shaped. Unit = information NEED, not screen instance: same info across N screens = ONE reused read model (same `[rm:]` id); list/filter/catalog views are valid use cases (filters + paging = impl detail, not modeled). Guard is against generic entity dumps — NOT against reuse or lists. Detail: [patterns.md](patterns.md).
 6. Rules enforced on write, not read. Validation lives at command. Stored facts trusted downstream — re-checking on read = redundant.
 7. Concrete examples everywhere. Example data in wireframes, scenarios, read models. More examples → fewer assumptions.
 8. Work backwards: screen → what data? → which read model? → which facts? → which command? → which screen/system provides it? Focuses on solution, surfaces gaps.

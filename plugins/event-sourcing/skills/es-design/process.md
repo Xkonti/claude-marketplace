@@ -77,6 +77,7 @@ Gate: all audits clean or ledgered.
 ## D6 — Verify + Handoff
 
 1. Coverage: every slice in model ↔ design block. Grep slice IDs both dirs, diff. State View slices additionally ↔ Projection Map rows.
+1b. **Anchor gate (model↔code drift).** Run the model-specs reference gate: every implemented slice's code carries its `[type:id]` anchors (`[slice:x]`, `[fact:y]`, `[rm:z]`); every anchor resolves to a live model element. Unanchored implemented slice OR dangling anchor (code cites a removed/renamed element) = drift → block handoff until model↔code reconciled ([change-intake.md](change-intake.md) if the model moved). Gate is mechanical (script in model-specs) — not a review nit. Completes the third corner: model ↔ design (1) ↔ code (1b).
 2. Every GWT ↔ test plan entry (count per slice, compare).
 3. All `td-N` decisions referenced by at least one slice (zombie decisions = smell).
 4. Model gaps found during design → confirmed present in model spine ledger, not just design notes.

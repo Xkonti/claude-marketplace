@@ -42,6 +42,7 @@ docs/event-model/                ← root (follow project convention if one exis
 4. **`_model.md` = single spine.** Story, swimlanes, open questions ledger, decision log, chapter list, element index — central, never duplicated into chapters. Chapters reference `q-N` / `d-N` by ID.
 5. **Cross-chapter ripple is explicit.** Later chapter's fact affects earlier chapter's read model → update the read model's DEFINITION (source list) where it lives + note at the new fact. Procedure: [operations.md](operations.md) § Shared-element update.
 6. **Every edit ends w/ integrity check.** Cheap grep pass after each editing session; full verification before declaring model complete. [verification.md](verification.md).
+7. **Model↔code anchors are a checked contract.** Implemented elements carry a `[type:id]` anchor comment in code (syntax: event-modeling/notation.md § Model↔code anchors). The drift gate (`scripts/check-model-drift.sh`, [verification.md](verification.md) tier E) resolves anchors both ways + is blocking for `verified` once any slice is `implemented`. `modeled-only` slices/elements are exempt but flagged if they appear in code.
 
 ## Reference files
 
@@ -50,6 +51,7 @@ docs/event-model/                ← root (follow project convention if one exis
 | [structure.md](structure.md) | Creating files — templates for `_model.md` + chapter files |
 | [operations.md](operations.md) | Changing things — add/update/split/rename/move/migrate procedures |
 | [verification.md](verification.md) | Proving completeness — grep recipes + 100%-complete checklist |
+| [scripts/check-model-drift.sh](scripts/check-model-drift.sh) | Running the model↔code drift gate (tier E) — run when slices marked `implemented` |
 
 ## Relationship to siblings
 
