@@ -27,7 +27,8 @@ Selection discipline: pick by problem, not by familiarity or coolness. Cheapest 
 |---|---|
 | Need to query/display data from one bounded stream | Live Model → DB Projected Read Model |
 | Need lists/filters across many streams or instances | DB Projected Read Model |
-| SPA wants resource-style API; many plain views over same data | Resource Projection (collapse w/ Projection Map — es-design) |
+| Several modeled views fold the same fact family; want one physical table | Resource Projection (physical collapse, per-query endpoints stay — es-design Projection Map) |
+| Client-side composed screen needs server ownership (consolidation / one fenceable version) | Logic Read Model (derivation) → consolidating projection (pure gather) |
 | Read-your-own-write fails; processor misses fresh data | accept+document → Partially Synchronous Projection → same-tx projection (es-design) |
 | Derived values (counts, sums) need a home | Logic Read Model → (only if heavy/reused) Automation w/ stored fact |
 | Display needs name/image for an id facts don't carry | Lookup Table |
